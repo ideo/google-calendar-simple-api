@@ -476,6 +476,19 @@ class GoogleCalendar:
         """List allowed event colors for the calendar."""
         return self.service.colors().get().execute()['event']
 
+    def list_calendars(self):
+        """Get a list of all calendars this user has access to"""
+        calendars = []
+        page_token = None
+        while True:
+            calendar_list = self.service.calendarList().list(pageToken=page_token).execute()
+            calendars += calendar_list['items']
+            page_token = calendar_list.get('nextPageToken')
+            if not page_token:
+                break
+
+        return calendars
+
     def __iter__(self):
         return iter(self.get_events())
 
